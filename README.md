@@ -1,6 +1,10 @@
 首先来个图：
 ![这里写图片描述](http://img.blog.csdn.net/20160622205902025)
 
+这里写图片描述
+
+我的上篇文章
+
 附个链接：
 [material-dialogs](https://github.com/afollestad/material-dialogs)
 
@@ -247,4 +251,104 @@ targetSdkVersion 22
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 ```
+
+
+
+
+
+
+
+
+在github上面苦苦寻找都木有找到有关Android自带下载器DownloadManager多并发下载的，于是就决定自己试试写一个。 
+先上个图： 
+这里写图片描述
+
+我的上篇文章 
+http://blog.csdn.net/u013277740/article/details/51737080 
+只实现了单个下载安装，这次升级一下
+
+实现步骤： 
+1、初始化一个缓存线程池
+
+cachedThreadPool = Executors.newCachedThreadPool();
+1
+1
+2、在渲染每一条数据的时候往里面加任务
+
+    private void initView() {
+        mRvList.setLayoutManager(new LinearLayoutManager(this));
+        mDownloadAdapter = new CommonAdapter<Download>(this, R.layout.listitem_mul, mList) {
+            @Override
+            protected void convert(ViewHolder holder, final Download download, int position) {
+                holder.setText(R.id.tv_name, download.getName());
+    //往线程池中增加任务
+                cachedThreadPool.execute(new DownLoadTask(holder, download, position));
+                final NumberProgressBar numberBar = holder.getView(R.id.number_download);
+                holder.setOnClickListener(R.id.btn_install, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (numberBar.getProgress() == 100) {
+                            install(MulActivity.this, download.getLastDownLoadId());
+                        }
+                    }
+                });
+            }
+        };
+        mRvList.setAdapter(mDownloadAdapter);
+    }
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+3、更新UI
+
+//转换到主线程
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        NumberProgressBar numberBar = holder.getView(R.id.number_download);
+                        numberBar.setProgress(progress);
+                    }
+                });
+
+
+
 
