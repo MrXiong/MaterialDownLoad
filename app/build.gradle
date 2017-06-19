@@ -22,8 +22,11 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
+    compile 'com.daimajia.numberprogressbar:library:1.4@aar'
     compile 'cn.trinea.android.common:trinea-android-common:4.2.15'
     compile('com.github.afollestad.material-dialogs:core:0.8.5.7@aar') {
         transitive = true
     }
+    compile 'com.zhy:base-rvadapter:3.0.3'
+    compile 'com.jakewharton:butterknife:7.0.1'
 }

@@ -2,16 +2,23 @@ package com.zx.download;
 
 import android.app.DownloadManager;
 import android.content.Context;
+import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import cn.trinea.android.common.util.PreferencesUtils;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,7 +34,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+    }
 
+    private void initView() {
         if (materialDialog == null) {
             materialDialog = new MaterialDialog.Builder(MainActivity.this)
                     .title("版本升级")
@@ -36,6 +46,17 @@ public class MainActivity extends AppCompatActivity {
                     .cancelable(false)
                     .show();
         }
+    }
+
+    public class DownLoadTask implements Runnable {
+
+        @Override
+        public void run() {
+            initDownLoad();
+        }
+    }
+
+    private void initDownLoad() {
         //1.得到下载对象
         DownloadManager dowanloadmanager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
         //2.创建下载请求对象，并且把下载的地址放进去
@@ -61,6 +82,20 @@ public class MainActivity extends AppCompatActivity {
         getContentResolver().registerContentObserver(CONTENT_URI, true, downloadObserver);
     }
 
+    @OnClick({R.id.btn_down, R.id.btn_downs})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.btn_down:
+                initView();
+                ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+                cachedThreadPool.execute(new DownLoadTask());
+                break;
+            case R.id.btn_downs:
+                startActivity(new Intent(this, MulActivity.class));
+                break;
+        }
+    }
+
     //用于显示下载进度
     class DownloadChangeObserver extends ContentObserver {
 
@@ -82,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 float percent = (float) currentSize / (float) totalSize;
                 int progress = Math.round(percent * 100);
                 materialDialog.setProgress(progress);
-                if(progress == 100) {
+                if (progress == 100) {
                     materialDialog.dismiss();
                 }
             }
@@ -90,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

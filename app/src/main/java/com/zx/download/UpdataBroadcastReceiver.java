@@ -24,12 +24,17 @@ public class UpdataBroadcastReceiver extends BroadcastReceiver {
         long downLoadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
         long cacheDownLoadId = PreferencesUtils.getLong(context, MainActivity.DOWNLOAD_ID);
         if (cacheDownLoadId == downLoadId) {
-            Intent install = new Intent(Intent.ACTION_VIEW);
-            File apkFile = queryDownloadedApk(context);
-            install.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
-            install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.startActivity(install);
+            install(context);
         }
+    }
+
+
+    private void install(Context context){
+        Intent install = new Intent(Intent.ACTION_VIEW);
+        File apkFile = queryDownloadedApk(context);
+        install.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive");
+        install.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(install);
     }
 
     //通过downLoadId查询下载的apk，解决6.0以后安装的问题
