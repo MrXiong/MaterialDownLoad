@@ -1,9 +1,5 @@
 首先来个图：
-![这里写图片描述](http://img.blog.csdn.net/20160622205902025)
-
-这里写图片描述
-
-我的上篇文章
+![image](https://github.com/MrXiong/MaterialDownLoad/tree/master/app/cover/down.gif)
 
 附个链接：
 [material-dialogs](https://github.com/afollestad/material-dialogs)
@@ -257,6 +253,7 @@ targetSdkVersion 22
 
 
 
+>简单实现DownloadManager+线程池实现多并发下载
 
 
 在github上面苦苦寻找都木有找到有关Android自带下载器DownloadManager多并发下载的，于是就决定自己试试写一个。 
